@@ -1,27 +1,26 @@
-import urllib.request as req
-import newsapi.config
-
-url = ('http://newsapi.org/v2/top-headlines?'
-       'country='+newsapi.config.country+'&'
-       'apiKey='+newsapi.config.apiKey)
-data = req.urlopen(url).read().decode()
-print(data)
-n = 0
-with open('/tmp/news.json', 'w') as fl:
-    fl.write(data)
-    fl.close()
-    
+# API key e url de acesso a API de noticias
+# www
+import config
+import requests
 import json
-dw = json.loads(data)
-text = ''
-size = len(dw['articles'])
-for i in dw['articles']:
-    print('\n\n {} \n{}\n{}'.format( i['title'],i['description'], i['url']))
-    #print(i)
-    n += 1
-    text += '\n\n'+i['title']+'\n'+repr(i['description']) + '\n' + i['url']
-    if n== size:
-        break
-with open('/tmp/news-br.txt', 'w') as fl:
-    fl.write(text)
-    fl.close()
+
+# Uso: config.config['APIKey'] -> guarda a chave de acesso a plataforma de noticias
+"""
+Módulo config.py
+
+config = {'APIKey':'',
+        'url':''}
+
+"""
+url = 'https://newsapi.org/v2/everything'
+
+response = requests.get(url+'?q=brasil&language=pt&'+'apiKey='+config.config['APIKey'])
+dat = json.loads(response.text)
+print(response)
+print([ i for i in map( lambda n: n['title'], dat['articles'][:2])][0:])
+print(response.json)
+
+#print(response.text)
+#with open('news-pt.json', 'w') as f:
+#    f.write(response.text)
+#    f.close()
